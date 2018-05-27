@@ -16,6 +16,11 @@ class UpcomingMovies::CLI
     'December'=>'12'}
 
     def call
+        root_imdb = "https://www.imdb.com/movies-coming-soon/"
+        imdb_url = root_imdb + "2018-06/?ref_=cs_dt_pv"
+        s= UpcomingMovies::Scraper.new
+        binding.pry
+        s.scrape_upcoming(imdb_url)        
         # prints out a user menu
         menu
     end
@@ -33,8 +38,6 @@ class UpcomingMovies::CLI
             return false
         end        
     end
-
-
 
     def list_movies_month
         puts "All upcoming movies playing this month"

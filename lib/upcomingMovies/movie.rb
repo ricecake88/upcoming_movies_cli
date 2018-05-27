@@ -16,6 +16,10 @@ class UpcomingMovies::Movie
         'December'=>'12'}
 
     @@all = []
+    def initialize(movieAttributes)
+        movieAttributes.each{|key, value| self.send(("#{key}="), value)}
+        @@all << self
+    end
 
     #temp class method until scraped
     def self.set_movies
