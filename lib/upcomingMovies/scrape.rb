@@ -23,10 +23,10 @@ class UpcomingMovies::Scraper
                 releaseDate = "#{node.text}"
                 dateInfo = releaseDate.split(" ")
                 month = dateInfo[0]
-                date = dateInfo[1]
+                date = dateInfo[1].gsub(/\u00A0/, "")
             end
           if releaseDate != nil && movie != nil 
-            UpcomingMovies::Movie.new({:name=>movie, :month=>month, :date=>date })
+            UpcomingMovies::Movie.new({:name=>movie, :month=>month, :date=>date, :year=>"2018" })
           end
         end
         
@@ -36,6 +36,8 @@ class UpcomingMovies::Scraper
     end
 
     def scrape_profile(url)
+        actor1 = Actor.create_from_name("Tom Hanks")
+        actor2 = Actor.create_from_name("Meg Ryan")
     end
 
     def scrape_distributors(url)

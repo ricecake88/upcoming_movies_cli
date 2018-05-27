@@ -19,7 +19,6 @@ class UpcomingMovies::CLI
         root_imdb = "https://www.imdb.com/movies-coming-soon/"
         imdb_url = root_imdb + "2018-06/?ref_=cs_dt_pv"
         s= UpcomingMovies::Scraper.new
-        binding.pry
         s.scrape_upcoming(imdb_url)        
         # prints out a user menu
         menu
@@ -62,6 +61,17 @@ class UpcomingMovies::CLI
         end
     end
 
+    def list_actors
+        UpcomingMovies::Movie.all.each do |movie|
+            if futureMovie?(movie.year, movie.month, movie.date)
+                binding.pry
+                movie.actors.each do |actor|
+                   puts actor
+               end
+            end
+        end
+    end
+
     def menu
         input = nil
         while input != "q"
@@ -81,6 +91,9 @@ class UpcomingMovies::CLI
             when "a"
                 puts "All upcoming movies"
                 list_movies
+            when "b"
+                puts "All actors with upcoming movies"
+                list_actors
             when "o"
                 puts menu
             when "q"
