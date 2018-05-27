@@ -1,34 +1,61 @@
+require 'date'
+require 'time'
+
 class UpcomingMovies::CLI
+    @@months = {'January'=>'01', 
+    'February'=>'02', 
+    'March'=>'03', 
+    'April'=>'04', 
+    'May'=>'05', 
+    'June'=>'06', 
+    'July'=>'07', 
+    'August'=>'08', 
+    'September'=>'09', 
+    'October'=>'10', 
+    'November'=>'11', 
+    'December'=>'12'}
+
     def call
         # prints out a user menu
         menu
     end
 
-    #list upcoming movies
-    def list_movies_week
-        puts "All upcoming movies playing this week"
-        UpcomingMovies::Movie.set_movies
-        movies = UpcomingMovies::Movie.week
-        movies.each do |movie|
-            puts "#{movie.month} #{movie.date} #{movie.name}"
-        end
+    #class method that checks whether or not the movie release date is in the future
+    def futureMovie?(year, month, date)
+        strDate = year + "-" + @@months[month] + "-" + sprintf("%02i", date)
+        newDate = Date.parse(strDate)
+        today = Date.today
+        if newDate >= today
+            puts "Movie is in the future"
+            return true
+        else
+            puts "Movie is old"
+            return false
+        end        
     end
+
+
 
     def list_movies_month
         puts "All upcoming movies playing this month"
         UpcomingMovies::Movie.set_movies
-        movies = UpcomingMovies::Movie.month
-        movies.each do |movie|
-            puts "#{movie.month} #{movie.date} #{movie.name}"
+        monthNo =  Date.today.strftime("%m")
+        currentYear = Date.today.strftime("%Y")
+        monthString = @@months.key(monthNo)
+        UpcomingMovies::Movie.all.each do |movie|
+            if movie.month == monthString && movie.year == currentYear
+                puts "#{movie.month} #{movie.date} #{movie.name}"
+            end
         end
     end
 
     def list_movies
         puts "All Upcoming Movies"
         UpcomingMovies::Movie.set_movies
-        movies = UpcomingMovies::Movie.all
-        movies.each do |movie|
-            puts "#{movie.month} #{movie.date} #{movie.name}"
+        UpcomingMovies::Movie.all.each do |movie|
+            if futureMovie?(movie.year, movie.month, movie.date)
+                puts "#{movie.month} #{movie.date} #{movie.name}"
+            end
         end
     end
 
@@ -38,7 +65,6 @@ class UpcomingMovies::CLI
             puts "--------------------------------------"
             puts "\tUpcoming Movies Menu:"            
             puts "--------------------------------------"
-            puts "u. List all movies for this upcoming week"
             puts "m. List all movies for the month"
             puts "a. List all movies"
             puts "o. Prints this menu again"
@@ -46,9 +72,6 @@ class UpcomingMovies::CLI
             puts "Please select an option: "
             input = gets.strip
             case input
-            when "u"
-                puts "Movies this upcoming Friday"
-                list_movies_week
             when "m"
                 puts "Movies this upcoming month"
                 list_movies_month
@@ -60,7 +83,7 @@ class UpcomingMovies::CLI
             when "q"
                 puts "Exiting this menu"
             else
-                puts "blah"
+                puts "Unrecognizable Command"
             end
             # default list of options for a menu
             # if 1 - list all movies for upcoming week
