@@ -65,9 +65,7 @@ class UpcomingMovies::CLI
         UpcomingMovies::Movie.all.each do |movie|
             if futureMovie?(movie.year, movie.month, movie.date)
                 binding.pry
-                movie.actors.each do |actor|
-                   puts actor
-               end
+                puts movie
             end
         end
     end
