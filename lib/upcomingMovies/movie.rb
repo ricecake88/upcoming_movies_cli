@@ -24,13 +24,12 @@ class UpcomingMovies::Movie
     end
 
     def add_actor(name)
-#TODO use find_or_create_by_name to check if the Actor already exists in the database
-# add it to the movie database of actors.
-        if !@actors.include?(name)
-            a = Persons::Actor.new(name)               
-            self.actors << a
-            if !a.movies.include?(self)
-                a.movies << self
+        actor = Persons::Actor.find_or_create_by_name(name)
+        if !@actors.detect{|a| a.name=name }
+            @actors << actor
+            binding.pry
+            if !actor.movies.include?(self)
+                actor.movies << self
             end
         end
     end
