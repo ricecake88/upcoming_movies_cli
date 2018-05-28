@@ -64,8 +64,7 @@ class UpcomingMovies::CLI
     def list_actors
         UpcomingMovies::Movie.all.each do |movie|
             if futureMovie?(movie.year, movie.month, movie.date)
-                binding.pry
-                puts movie
+                movie.actors.each {|actor| puts actor.name}
             end
         end
     end
