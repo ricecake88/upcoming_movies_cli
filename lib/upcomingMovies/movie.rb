@@ -1,6 +1,7 @@
 require 'pry'
 
 class UpcomingMovies::Movie
+    extend ::Persons
     attr_accessor :name, :description, :month, :date, :year, :actors, :url
     @@months = {'January'=>'01', 
         'February'=>'02', 
@@ -18,31 +19,20 @@ class UpcomingMovies::Movie
     @@all = []
     def initialize(movieAttributes)
         movieAttributes.each{|key, value| self.send(("#{key}="), value)}
+        @actors = []
         @@all << self
     end
 
-    #temp class method until scraped
-    def self.set_movies
-        movieObject = self.new
-        movieObject.name = "Sleepless in Seattle"
-        movieObject.description = "Romantic comedy in Seattle"
-        movieObject.year = "2018"
-        movieObject.month = "May"
-        movieObject.date = "26"
-        movieObject.url = ""
-        #eventually movieObject.actor = [ActorObject1, ActorObject2]
-        movieObject.actors = ["Meg Ryan", "Tom Hanks"]
-            @@all << movieObject
-
-        movieObject2 = self.new
-        movieObject2.name = "Notting Hill"
-        movieObject2.description = "Romantic Comedy in Notting Hill"
-        movieObject2.year = "2018"
-        movieObject2.month = "June"
-        movieObject2.date = "18"
-        movieObject2.url = ""
-        movieObject2.actors = ["Hugh Grant", "Julia Roberts"]
-           @@all << movieObject2        
+    def add_actor(name)
+#TODO use find_or_create_by_name to check if the Actor already exists in the database
+# add it to the movie database of actors.
+        if !@actors.include?(name)
+            a = Persons::Actor.new(name)               
+            self.actors << a
+            if !a.movies.include?(self)
+                a.movies << self
+            end
+        end
     end
 
     #class method returns all upcoming movies
