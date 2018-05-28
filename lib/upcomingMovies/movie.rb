@@ -25,13 +25,13 @@ class UpcomingMovies::Movie
 
     def add_actor(name)
         actor = Persons::Actor.find_or_create_by_name(name)
-        if !@actors.detect{|a| a.name=name }
-            @actors << actor
-            binding.pry
+        if !self.actors.any?{|a| a.name == name }
+            self.actors << actor
             if !actor.movies.include?(self)
                 actor.movies << self
             end
-        end
+        end   
+        puts self    
     end
 
     #class method returns all upcoming movies
