@@ -1,6 +1,5 @@
 module Persons
     class UpcomingMovies::Actor < UpcomingMovies::Person
-        attr_accessor :movies
 
         @@all = []
 
