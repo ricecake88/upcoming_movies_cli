@@ -23,6 +23,13 @@ class UpcomingMovies::CLI
         # prints out a user menu
         menu
     end
+      
+    def currentMonthYear
+        monthNo =  Date.today.strftime("%m")
+        currentYear = Date.today.strftime("%Y")
+        monthString = @@months.key(monthNo)
+        [monthString, currentYear]
+    end
 
     #class method that checks whether or not the movie release date is in the future
     def futureMovie?(year, month, date)
@@ -30,30 +37,26 @@ class UpcomingMovies::CLI
         newDate = Date.parse(strDate)
         today = Date.today
         if newDate >= today
-            puts "Movie is in the future"
+            #puts "Movie is in the future"
             return true
         else
-            puts "Movie is old"
+            #puts "Movie is old"
             return false
         end        
     end
 
     def list_movies_month
-        puts "All upcoming movies playing this month"
-        UpcomingMovies::Movie.set_movies
-        monthNo =  Date.today.strftime("%m")
-        currentYear = Date.today.strftime("%Y")
-        monthString = @@months.key(monthNo)
+        currentInfo = currentMonthYear
         UpcomingMovies::Movie.all.each do |movie|
-            if movie.month == monthString && movie.year == currentYear
+            if movie.month == currentInfo[0] && movie.year == currentInfo[1]
                 puts "#{movie.month} #{movie.date} #{movie.name}"
             end
         end
     end
 
+    #todo: refactor list_movies to take no month as default
+    # and combine list_movies_month with list_movies
     def list_movies
-        puts "All Upcoming Movies"
-        UpcomingMovies::Movie.set_movies
         UpcomingMovies::Movie.all.each do |movie|
             if futureMovie?(movie.year, movie.month, movie.date)
                 puts "#{movie.month} #{movie.date} #{movie.name}"
@@ -62,12 +65,11 @@ class UpcomingMovies::CLI
     end
 
     def list_actors
-        UpcomingMovies::Movie.all.each do |movie|
-            if futureMovie?(movie.year, movie.month, movie.date)
-                movie.actors.each {|actor| puts actor.name}
-            end
+        UpcomingMovies::Actor.all.each do |actor|
+            puts actor.name
         end
     end
+
 
     def menu
         input = nil
@@ -77,13 +79,14 @@ class UpcomingMovies::CLI
             puts "--------------------------------------"
             puts "m. List all movies for the month"
             puts "a. List all movies"
+            puts "b. List all actors with upcoming movies"
             puts "o. Prints this menu again"
             puts "q: To quit this menu"
             puts "Please select an option: "
             input = gets.strip
             case input
             when "m"
-                puts "Movies this upcoming month"
+                puts "Movies this month"
                 list_movies_month
             when "a"
                 puts "All upcoming movies"
