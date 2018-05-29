@@ -27,11 +27,7 @@ class UpcomingMovies::Movie
         actor = UpcomingMovies::Actor.find_or_create_by_name(name)
         if !self.actors.any?{|a| a.name == name }
             self.actors << actor
-            if !actor.movies.include?(self)
-                actor.movies << self
-            end
-        end   
-        puts self    
+        end 
     end
 
     #class method returns all upcoming movies
