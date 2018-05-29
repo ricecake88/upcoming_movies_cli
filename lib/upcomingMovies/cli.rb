@@ -60,7 +60,7 @@ class UpcomingMovies::CLI
             end
         end
     end
-        
+
     def list_movies_month
         currentInfo = currentMonthYear
         UpcomingMovies::Movie.all.each do |movie|
@@ -81,9 +81,10 @@ class UpcomingMovies::CLI
     end
 
     def list_actors
-        UpcomingMovies::Actor.all.each do |actor|
-            puts actor.name
+        UpcomingMovies::Actor.all.sort!.each do |x,y|
+            x <=> y
         end
+        UpcomingMovies::Actor.all.each {|actor| puts actor.name}
     end
 
 
