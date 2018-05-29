@@ -23,7 +23,13 @@ class UpcomingMovies::CLI
         # prints out a user menu
         menu
     end
-      
+
+    def date_of_next_friday
+        date  = Date.parse("Friday")
+        delta = date > Date.today ? 0 : 7
+        [(date + delta).strftime("%m"), (date+delta).strftime("%d"), (date+delta).strftime("%Y")]
+    end
+
     def currentMonthYear
         monthNo =  Date.today.strftime("%m")
         currentYear = Date.today.strftime("%Y")
@@ -45,6 +51,16 @@ class UpcomingMovies::CLI
         end        
     end
 
+    def list_movies_week
+        date = date_of_next_friday
+        UpcomingMovies::Movie.all.each do |movie|
+            day = sprintf("%02i", movie.date) 
+            if @@months[movie.month] == date[0] && day == date[1] && movie.year == date[2]
+                puts "#{movie.month} #{movie.date} #{movie.name}"
+            end
+        end
+    end
+        
     def list_movies_month
         currentInfo = currentMonthYear
         UpcomingMovies::Movie.all.each do |movie|
@@ -77,6 +93,7 @@ class UpcomingMovies::CLI
             puts "--------------------------------------"
             puts "\tUpcoming Movies Menu:"            
             puts "--------------------------------------"
+            puts "w. List all movies coming out this Friday"
             puts "m. List all movies for the month"
             puts "a. List all movies"
             puts "b. List all actors with upcoming movies"
@@ -85,6 +102,9 @@ class UpcomingMovies::CLI
             puts "Please select an option: "
             input = gets.strip
             case input
+            when "w"
+                puts "All movies upcoming this Friday"
+                list_movies_week
             when "m"
                 puts "Movies this month"
                 list_movies_month
