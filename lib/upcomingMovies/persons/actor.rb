@@ -13,7 +13,7 @@ module Persons
           end
 
         def self.create_by_name(name)
-            actor = self.new(name)
+            actor = self.new({:name=>name})
             @@all << actor
             actor
         end
