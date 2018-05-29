@@ -2,15 +2,14 @@ require 'nokogiri'
 require 'open-uri'
 
 class UpcomingMovies::Scraper
-    def initialize
-        puts "test"
-    end
 
-    @@actors = ["Tom Hanks", "Tom Cruise", "Nicole Kidman", "Rachel McAdams"]
+    BASE_PATH = "https://imdb.com/"
+    @@actors = ["Tom Hanks", "Tom Cruise", "Nicole Kidman", "Rachel McAdams", "Tom Hanks"]
     # first version is to scrape coming soon information
     # second version is to take information from coming soon and
     # get info from movie profile page
     def scrape_upcoming(url)
+        puts "Please wait a few minutes, retrieving data..."
         #root_imdb = "https://www.imdb.com/movies-coming-soon/"
         #imdb_html = open(root_imdb + "2018-06/?ref_=cs_dt_pv")
         imdb_url = open(url)
@@ -34,22 +33,25 @@ class UpcomingMovies::Scraper
                 date = dateInfo[1].gsub(/\u00A0/, "")
             end
           if releaseDate != nil && movie != nil 
-            m = UpcomingMovies::Movie.new({:name=>movie, :month=>month, :date=>date, :year=>"2018" })
-            @@actors.each do |name|
-                m.add_actor(name)
-            end
-            break
+            m = UpcomingMovies::Movie.new({:name=>movie, :month=>month, :date=>date,
+                 :year=>"2018", :url=>profile_url })
+            scrape_profile(profile_url, m)
           end
         end
         
-        UpcomingMovies::Movie.all.each do |movie|
-          puts "#{movie.name} #{movie.month} #{movie.date}"
-        end        
+       # UpcomingMovies::Movie.all.each do |movie|
+       #   puts "#{movie.name} #{movie.month} #{movie.date}"
+       # end        
     end
 
     # add actor information to actor
-    def scrape_profile(url)
-        
+    def scrape_profile(url, movieInstance)
+        imdb_html = open(BASE_PATH+url)
+        imdbDoc = Nokogiri::HTML(imdb_html)
+        actorsInfo = imdbDoc.css("td.itemprop a span")
+        actorsInfo.each do |actor| 
+            movieInstance.add_actor(actor.text)
+        end
     end
 
     def scrape_distributors(url)
