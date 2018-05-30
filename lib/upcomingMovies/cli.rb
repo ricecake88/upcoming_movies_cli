@@ -52,12 +52,22 @@ class UpcomingMovies::CLI
     end
 
     def list_movies_week
+        @movies_week = []
         date = date_of_next_friday
-        UpcomingMovies::Movie.all.each do |movie|
+        UpcomingMovies::Movie.all.each_with_index do |movie,index|
             day = sprintf("%02i", movie.date) 
             if @@months[movie.month] == date[0] && day == date[1] && movie.year == date[2]
-                puts "#{movie.month} #{movie.date} #{movie.name}"
+                puts "#{index} #{movie.month} #{movie.date} #{movie.name}"
+                @movies_week << movie.name
             end
+        end
+        puts "Select a movie by choosing a number associated with the movie listed."
+        input = gets.strip.to_i
+        #todo - change to raise exception
+        if !(input > @movies_week.length || input < 0)
+           puts @movies_week[input]
+        else
+            puts "Error"
         end
     end
 
@@ -81,12 +91,11 @@ class UpcomingMovies::CLI
     end
 
     def list_actors
-        UpcomingMovies::Actor.all.sort!.each do |x,y|
-            x <=> y
+        UpcomingMovies::Actor.all.sort! do |x,y|
+            x.name <=> y.name
         end
         UpcomingMovies::Actor.all.each {|actor| puts actor.name}
     end
-
 
     def menu
         input = nil
