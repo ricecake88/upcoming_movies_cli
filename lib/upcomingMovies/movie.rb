@@ -2,7 +2,7 @@ require 'pry'
 
 class UpcomingMovies::Movie
     extend ::Persons
-    attr_accessor :name, :description, :month, :date, :year, :actors, :url
+    attr_accessor :name, :description, :month, :date, :year, :actors, :url, :runtime
     @@months = {'January'=>'01', 
         'February'=>'02', 
         'March'=>'03', 
@@ -27,6 +27,20 @@ class UpcomingMovies::Movie
         if !self.actors.any?{|a| a.name == name }
             self.actors << actor
         end 
+    end
+
+    def add_self
+        if self.actors
+            self.actors.each do |actor|
+                if actor.movies
+                    if !actor.movies.any?{|movie| movie.name == self.name}
+                        actor.instance_variable_set(:@movies, [self])
+                    end
+                else
+                    actor.instance_variable_set(:@movies, [self])
+                end
+            end
+        end
     end
 
     def add_attributes(movieAttributes)
