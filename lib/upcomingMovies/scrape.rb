@@ -38,6 +38,7 @@ class UpcomingMovies::Scraper
 
     def scrape_movie_profile(url)
         actors = []
+        genres = []
         releaseDate = nil
         month = ""
         date = ""        
@@ -47,6 +48,8 @@ class UpcomingMovies::Scraper
             imdbDoc = Nokogiri::HTML(imdb_html)
             actorsInfo = imdbDoc.css("td.itemprop a span")
             runtime = imdbDoc.css("div.txt-block time").text
+            genreInfo = imdbDoc.css("div.title_wrapper div.subtext a span")
+            genreInfo.each {|genre| genres << genre.text }
             release_date = imdbDoc.xpath("//div[contains(@class, title.wrapper)]/a[contains(@title, 'See more release dates')]").text
             dateInfo = release_date.split(" ")
             month = dateInfo[1]
@@ -58,7 +61,7 @@ class UpcomingMovies::Scraper
         rescue 
             puts "Could not open URL #{BASE_PATH + url}"
         end
-        {:actors => actors, :month => month, :date=> date, :year=> year, :url=> url, :runtime=> runtime}
+        {:actors => actors, :month => month, :date=> date, :year=> year, :url=> url, :runtime=> runtime, :genre=>genres}
     end
 
     def scrape_distributors(url)

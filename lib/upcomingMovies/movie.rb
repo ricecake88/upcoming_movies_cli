@@ -2,7 +2,7 @@ require 'pry'
 
 class UpcomingMovies::Movie
     extend ::Persons
-    attr_accessor :name, :description, :month, :date, :year, :actors, :url, :runtime
+    attr_accessor :name, :description, :month, :date, :year, :actors, :url, :runtime, :genre
     @@months = {'January'=>'01', 
         'February'=>'02', 
         'March'=>'03', 

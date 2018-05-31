@@ -55,9 +55,13 @@ class UpcomingMovies::CLI
         puts "Select a movie by choosing a number associated with the movie listed."
         input = gets.strip.to_i-1
         #todo - change to raise exception
-        if !(input > @movies_week.length || input < 0)
-           puts "Movie: #{@movies_week[input].name}"
-           puts "Runtime: #{@movies_week[input].runtime}"
+        if !(input > @movies_week.length-1 || input < 0)
+           puts "Movie: #{@movies_week[input][:name]}"
+           puts "Runtime: #{@movies_week[input][:runtime]}"
+           binding.pry
+           puts "Genre:"
+           @movies_week[input][:genres].each {|genre| print genre + " "}
+           print("\n")
         else
             puts "Error"
         end
@@ -70,7 +74,7 @@ class UpcomingMovies::CLI
             day = sprintf("%02i", movie.date) 
             if @@months[movie.month] == date[0] && day == date[1] && movie.year == date[2]
                 puts "#{index+1} #{movie.month} #{movie.date} #{movie.name}"
-                @movies_week << [{:name => movie.name, :runtime=>movie.runtime]
+                @movies_week << {:name => movie.name, :runtime=>movie.runtime, :genres=>movie.genre}
             end
         end
         sub_movie_menu
