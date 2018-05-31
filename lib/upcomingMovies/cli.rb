@@ -97,6 +97,25 @@ class UpcomingMovies::CLI
         UpcomingMovies::Actor.all.each {|actor| puts actor.name}
     end
 
+    def list_actors_month
+        currentInfo = currentMonthYear
+        UpcomingMovies::Movie.all.each do |movie|
+            if movie.month == currentInfo[0] && movie.year == currentInfo[1]
+                movie.actors.each {|actor| puts actor.name}
+            end
+        end
+    end
+
+    def list_actors_week
+        date = date_of_next_friday
+        UpcomingMovies::Movie.all.each_with_index do |movie,index|
+            day = sprintf("%02i", movie.date) 
+            if @@months[movie.month] == date[0] && day == date[1] && movie.year == date[2]
+                movie.actors.each {|actor| puts actor.name}
+            end
+        end
+    end
+
     def menu
         input = nil
         while input != "q"
@@ -107,6 +126,8 @@ class UpcomingMovies::CLI
             puts "m. List all movies for the month"
             puts "a. List all movies"
             puts "b. List all actors with upcoming movies"
+            puts "d. List all actors with movies released this month"
+            puts "e. List all actors with movies being released this week"
             puts "o. Prints this menu again"
             puts "q: To quit this menu"
             puts "Please select an option: "
@@ -124,6 +145,12 @@ class UpcomingMovies::CLI
             when "b"
                 puts "All actors with upcoming movies"
                 list_actors
+            when "d"
+                puts "All actors with upcoming movie releases this month"
+                list_actors_month
+            when "e"
+                puts "All actors with upcoming movie releases this week"
+                list_actors_week
             when "o"
                 puts menu
             when "q"
