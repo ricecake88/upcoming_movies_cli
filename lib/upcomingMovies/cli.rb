@@ -51,24 +51,29 @@ class UpcomingMovies::CLI
         end        
     end
 
+    def sub_movie_menu
+        puts "Select a movie by choosing a number associated with the movie listed."
+        input = gets.strip.to_i-1
+        #todo - change to raise exception
+        if !(input > @movies_week.length || input < 0)
+           puts "Movie: #{@movies_week[input].name}"
+           puts "Runtime: #{@movies_week[input].runtime}"
+        else
+            puts "Error"
+        end
+    end
+
     def list_movies_week
         @movies_week = []
         date = date_of_next_friday
         UpcomingMovies::Movie.all.each_with_index do |movie,index|
             day = sprintf("%02i", movie.date) 
             if @@months[movie.month] == date[0] && day == date[1] && movie.year == date[2]
-                puts "#{index} #{movie.month} #{movie.date} #{movie.name}"
-                @movies_week << movie.name
+                puts "#{index+1} #{movie.month} #{movie.date} #{movie.name}"
+                @movies_week << [{:name => movie.name, :runtime=>movie.runtime]
             end
         end
-        puts "Select a movie by choosing a number associated with the movie listed."
-        input = gets.strip.to_i
-        #todo - change to raise exception
-        if !(input > @movies_week.length || input < 0)
-           puts @movies_week[input]
-        else
-            puts "Error"
-        end
+        sub_movie_menu
     end
 
     def list_movies_month
@@ -158,16 +163,6 @@ class UpcomingMovies::CLI
             else
                 puts "Unrecognizable Command"
             end
-            # default list of options for a menu
-            # if 1 - list all movies for upcoming week
-            # if 2 - list all movies for the month
-            # if 3 - list all movies for the rest of the year
-            # if 4 - list all actors that have upcoming movies for the year
-                # pick an acctor to show the list of movies being released
-                # for that actor
-            # if 5 - list all distributors that have upcoming movies for the year
-                # pick a distributor to show list of movies being released related
-                # to distributor
         end
     end
 end
