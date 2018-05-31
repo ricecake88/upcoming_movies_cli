@@ -19,7 +19,6 @@ class UpcomingMovies::Movie
     @@all = []
     def initialize(movieAttributes)
         movieAttributes.each{|key, value| self.send(("#{key}="), value)}
-        @actors = []
         @@all << self
     end
 
