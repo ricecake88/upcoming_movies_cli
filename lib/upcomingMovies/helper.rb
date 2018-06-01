@@ -21,7 +21,7 @@ module Helper
         [(date + delta).strftime("%m"), (date+delta).strftime("%d"), (date+delta).strftime("%Y")]
     end
 
-    def currentMonthYear
+    def current_month_year
         monthNo =  Date.today.strftime("%m")
         currentYear = Date.today.strftime("%Y")
         monthString = @@months.key(monthNo)

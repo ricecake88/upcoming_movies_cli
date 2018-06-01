@@ -7,8 +7,8 @@ class UpcomingMovies::Movie
         :rating
 
     @@all = []
-    def initialize(movieAttributes)
-        movieAttributes.each{|key, value| self.send(("#{key}="), value)}
+    def initialize(movie_attributes)
+        movie_attributes.each{|key, value| self.send(("#{key}="), value)}
         @@all << self
     end
 
@@ -19,7 +19,7 @@ class UpcomingMovies::Movie
         end 
     end
 
-    def add_self
+    def add_self_to_actor
         if self.actors
             self.actors.each do |actor|
                 if actor.movies
@@ -33,16 +33,16 @@ class UpcomingMovies::Movie
         end
     end
 
-    def add_attributes(movieAttributes)
-        movieAttributes.each {|key, value| self.send(("#{key}="), value)}
+    def add_attributes(movie_attributes)
+        movie_attributes.each {|key, value| self.send(("#{key}="), value)}
     end
 
-    #class method returns all upcoming movies
+    #class method returns all upcoming movies if movie is in the future
     def self.all
         @@all.select {|movie| movie if movie.futureMovie?}
     end
 
-    def self.moviesThisWeek
+    def self.movies_this_week
         date = date_of_next_or_this_friday
         moviesInWeek = @@all.select do |movie|
             day = sprintf("%02i", movie.date)
@@ -53,10 +53,10 @@ class UpcomingMovies::Movie
         moviesInWeek
     end
 
-    def self.moviesThisMonth
-        currentInfo = currentMonthYear
-        movieMonth = @@all.select {|movie| movie if movie.month == currentInfo[0] && 
-            movie.year == currentInfo[1] && movie.futureMovie?}
+    def self.movies_this_month
+        current_info = current_month_year
+        movieMonth = @@all.select {|movie| movie if movie.month == current_info[0] && 
+            movie.year == current_info[1] && movie.futureMovie?}
         movieMonth
     end
 

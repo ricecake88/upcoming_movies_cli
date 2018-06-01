@@ -9,60 +9,60 @@ class UpcomingMovies::CLI
         root_imdb = "https://www.imdb.com/movies-coming-soon/"
         imdb_url = root_imdb + "2018-06/?ref_=cs_dt_pv"
         s= UpcomingMovies::Scraper.new
-        s.scrape_upcoming(imdb_url)        
-        # prints out a user menu
+        s.scrape_upcoming(imdb_url)
+        #prints out menu    
         menu
     end
 
-    def sub_movie_menu(movieArray)
+    def sub_movie_menu(movie_array)
         puts "Select a movie by choosing a number associated with the movie listed."
         input = gets.strip.to_i-1
         #todo - change to raise exception
-        if !(input > movieArray.length-1 || input < 0)
-           puts "Movie: #{movieArray[input].name}"
-           puts "Runtime: #{movieArray[input].runtime}"
+        if !(input > movie_array.length-1 || input < 0)
+           puts "Movie: #{movie_array[input].name}"
+           puts "Runtime: #{movie_array[input].runtime}"
            print "Genre: "
-           movieArray[input].genre.each {|g| print g + " "}
+           movie_array[input].genre.each {|g| print g + " "}
            print("\n")
-           puts "Description: #{movieArray[input].description}"
+           puts "Description: #{movie_array[input].description}"
            puts "Cast:"
-           movieArray[input].actors.each {|actor| puts actor.name}
+           movie_array[input].actors.each {|actor| puts actor.name}
         else
             puts "Error, no movie associated with specified number."
         end
     end
  
-    def list_movies(movieArray)
-        if movieArray.length != 0
-            movieArray.each_with_index do |movie, index|
+    def list_movies(movie_array)
+        if movie_array.length != 0
+            movie_array.each_with_index do |movie, index|
                 puts "#{index+1}. #{movie.month} #{movie.date} #{movie.name}"
             end
-            sub_movie_menu(movieArray)
+            sub_movie_menu(movie_array)
         else
             puts "There are no upcoming movies for this time frame."
         end
     end
 
-    def sub_actor_menu(actorArray)
+    def sub_actor_menu(actor_array)
         puts "Select an actor to see which upcoming movies the actor has by entering a number:"
         input = gets.strip.to_i-1
         #todo - change to raise exception
-        if !(input > actorArray.length-1 || input < 0)
-           actorArray[input].movies.each {|movie| puts "#{movie.month} #{movie.date} #{movie.name}"}
+        if !(input > actor_array.length-1 || input < 0)
+           actor_array[input].movies.each {|movie| puts "#{movie.month} #{movie.date} #{movie.name}"}
         else
             puts "Error, no actor associated with specified number."
         end
     end
 
-    def list_actors(actorArray)
-        if actorArray.length != 0
-            actorArray.sort! do |x,y|
+    def list_actors(actor_array)
+        if actor_array.length != 0
+            actor_array.sort! do |x,y|
                 x.name <=> y.name
             end
-            actorArray.uniq.each_with_index do |actor, index|
+            actor_array.uniq.each_with_index do |actor, index|
                 puts "#{index+1}. #{actor.name}"
             end
-            sub_actor_menu(actorArray)
+            sub_actor_menu(actor_array)
         else
             puts "There are no actors with upcoming movie releases in this time frame."
         end
@@ -79,7 +79,7 @@ class UpcomingMovies::CLI
             puts "a. List all movies"
             puts "b. List all actors with upcoming movies"
             puts "d. List all actors with movies released this month"
-            puts "e. List all actors with movies being released this week"
+            puts "e. List all actors with movies being released this Friday"
             puts "o. Prints this menu again"
             puts "q: To quit this menu"
             puts "Please select an option: "
@@ -88,11 +88,11 @@ class UpcomingMovies::CLI
             when "w"
                 puts "All movies upcoming this Friday"
                 puts "----------------------------------------------------"
-                list_movies(UpcomingMovies::Movie.moviesThisWeek)
+                list_movies(UpcomingMovies::Movie.movies_this_week)
             when "m"
                 puts "Movies being released the rest of this month"
                 puts "----------------------------------------------------"                
-                list_movies(UpcomingMovies::Movie.moviesThisMonth)
+                list_movies(UpcomingMovies::Movie.movies_this_month)
             when "a"
                 puts "All upcoming movies"
                 puts "----------------------------------------------------"                
@@ -104,11 +104,11 @@ class UpcomingMovies::CLI
             when "d"
                 puts "All actors with upcoming movie releases this month"
                 puts "----------------------------------------------------"                
-                list_actors(UpcomingMovies::Actor.actorsThisMonth)
+                list_actors(UpcomingMovies::Actor.actors_this_month)
             when "e"
-                puts "All actors with upcoming movie releases this week"
+                puts "All actors with movie releases this Friday"
                 puts "----------------------------------------------------"                
-                list_actors(UpcomingMovies::Actor.actorsThisWeek)
+                list_actors(UpcomingMovies::Actor.actors_this_week)
             when "o"
                 puts menu
             when "q"

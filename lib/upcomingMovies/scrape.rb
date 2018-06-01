@@ -27,7 +27,7 @@ class UpcomingMovies::Scraper
                 movie_attributes = scrape_movie_profile(profile_url)
                 m = UpcomingMovies::Movie.new(movie_attributes)
                 m.add_attributes({:name=>movie})
-                m.add_self
+                m.add_self_to_actor
             end
         end
         
@@ -43,7 +43,6 @@ class UpcomingMovies::Scraper
         month = ""
         date = ""        
         begin
-            sleep 2
             imdb_html = open(BASE_PATH + url)
             imdbDoc = Nokogiri::HTML(imdb_html)
             actorsInfo = imdbDoc.css("td.itemprop a span")
