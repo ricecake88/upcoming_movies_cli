@@ -28,12 +28,9 @@ class UpcomingMovies::Scraper
                 m = UpcomingMovies::Movie.new(movie_attributes)
                 m.add_attributes({:name=>movie})
                 m.add_self_to_actor
+                puts "...Scraped #{m.name}"
             end
         end
-        
-      #  UpcomingMovies::Movie.all.each do |movie|
-      #    puts "#{movie.name} #{movie.month} #{movie.date}"
-      #  end
     end
 
     def scrape_movie_profile(url)
