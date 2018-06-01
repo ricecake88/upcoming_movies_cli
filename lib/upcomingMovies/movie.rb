@@ -2,7 +2,9 @@ require 'pry'
 
 class UpcomingMovies::Movie
     extend ::Persons
-    attr_accessor :name, :description, :month, :date, :year, :actors, :url, :runtime, :genre
+    extend ::Helper
+    attr_accessor :name, :description, :month, :date, :year, :actors, :url, :runtime, :genre,
+        :rating
     @@months = {'January'=>'01', 
         'February'=>'02', 
         'March'=>'03', 
@@ -49,7 +51,33 @@ class UpcomingMovies::Movie
 
     #class method returns all upcoming movies
     def self.all
-        @@all
+        @@all.select {|movie| movie if movie.futureMovie?}
+    end
+
+    def self.moviesThisWeek
+        date = date_of_next_friday
+        moviesInWeek = @@all.select do |movie|
+            day = sprintf("%02i", movie.date)
+            if @@months[movie.month] == date[0] && day == date[1] && movie.year == date[2]
+                movie
+            end
+        end
+        moviesInWeek
+    end
+
+    def self.moviesThisMonth
+        currentInfo = currentMonthYear
+        movieMonth = @@all.select {|movie| movie if movie.month == currentInfo[0] && 
+            movie.year == currentInfo[1] && movie.futureMovie?}
+        movieMonth
+    end
+
+    #class method that checks whether or not the movie release date is in the future
+    def futureMovie?
+        strDate = @year + "-" + @@months[@month] + "-" + sprintf("%02i", @date)
+        newDate = Date.parse(strDate)
+        today = Date.today
+        result = newDate >= today ? true : false
     end
 
 end

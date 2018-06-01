@@ -2,18 +2,7 @@ require 'date'
 require 'time'
 
 class UpcomingMovies::CLI
-    @@months = {'January'=>'01', 
-    'February'=>'02', 
-    'March'=>'03', 
-    'April'=>'04', 
-    'May'=>'05', 
-    'June'=>'06', 
-    'July'=>'07', 
-    'August'=>'08', 
-    'September'=>'09', 
-    'October'=>'10', 
-    'November'=>'11', 
-    'December'=>'12'}
+    include ::Helper
 
     def call
         root_imdb = "https://www.imdb.com/movies-coming-soon/"
@@ -24,78 +13,32 @@ class UpcomingMovies::CLI
         menu
     end
 
-    def date_of_next_friday
-        date  = Date.parse("Friday")
-        delta = date > Date.today ? 0 : 7
-        [(date + delta).strftime("%m"), (date+delta).strftime("%d"), (date+delta).strftime("%Y")]
-    end
-
-    def currentMonthYear
-        monthNo =  Date.today.strftime("%m")
-        currentYear = Date.today.strftime("%Y")
-        monthString = @@months.key(monthNo)
-        [monthString, currentYear]
-    end
-
-    #class method that checks whether or not the movie release date is in the future
-    def futureMovie?(year, month, date)
-        strDate = year + "-" + @@months[month] + "-" + sprintf("%02i", date)
-        newDate = Date.parse(strDate)
-        today = Date.today
-        if newDate >= today
-            #puts "Movie is in the future"
-            return true
-        else
-            #puts "Movie is old"
-            return false
-        end        
-    end
-
-    def sub_movie_menu
+    def sub_movie_menu(movieArray)
         puts "Select a movie by choosing a number associated with the movie listed."
         input = gets.strip.to_i-1
         #todo - change to raise exception
-        if !(input > @movies_week.length-1 || input < 0)
-           puts "Movie: #{@movies_week[input][:name]}"
-           puts "Runtime: #{@movies_week[input][:runtime]}"
-           binding.pry
-           puts "Genre:"
-           @movies_week[input][:genres].each {|genre| print genre + " "}
+        if !(input > movieArray.length-1 || input < 0)
+           puts "Movie: #{movieArray[input].name}"
+           puts "Runtime: #{movieArray[input].runtime}"
+           print "Genre: "
+           movieArray[input].genre.each {|g| print g + " "}
            print("\n")
+           puts "Description: #{movieArray[input].description}"
+           puts "Cast:"
+           movieArray[input].actors.each {|actor| puts actor.name}
         else
-            puts "Error"
+            puts "Error, no movie associated with specified number."
         end
     end
-
-    def list_movies_week
-        @movies_week = []
-        date = date_of_next_friday
-        UpcomingMovies::Movie.all.each_with_index do |movie,index|
-            day = sprintf("%02i", movie.date) 
-            if @@months[movie.month] == date[0] && day == date[1] && movie.year == date[2]
+ 
+    def list_movies(movieArray)
+        if movieArray.length != 0
+            movieArray.each_with_index do |movie, index|
                 puts "#{index+1} #{movie.month} #{movie.date} #{movie.name}"
-                @movies_week << {:name => movie.name, :runtime=>movie.runtime, :genres=>movie.genre}
             end
-        end
-        sub_movie_menu
-    end
-
-    def list_movies_month
-        currentInfo = currentMonthYear
-        UpcomingMovies::Movie.all.each do |movie|
-            if movie.month == currentInfo[0] && movie.year == currentInfo[1]
-                puts "#{movie.month} #{movie.date} #{movie.name}"
-            end
-        end
-    end
-
-    #todo: refactor list_movies to take no month as default
-    # and combine list_movies_month with list_movies
-    def list_movies
-        UpcomingMovies::Movie.all.each do |movie|
-            if futureMovie?(movie.year, movie.month, movie.date)
-                puts "#{movie.month} #{movie.date} #{movie.name}"
-            end
+            sub_movie_menu(movieArray)
+        else
+            puts "There are no upcoming movies for this time frame."
         end
     end
 
@@ -144,28 +87,34 @@ class UpcomingMovies::CLI
             case input
             when "w"
                 puts "All movies upcoming this Friday"
-                list_movies_week
+                puts "----------------------------------------------------"
+                list_movies(UpcomingMovies::Movie.moviesThisWeek)
             when "m"
-                puts "Movies this month"
-                list_movies_month
+                puts "Movies being released the rest of this month"
+                puts "----------------------------------------------------"                
+                list_movies(UpcomingMovies::Movie.moviesThisMonth)
             when "a"
                 puts "All upcoming movies"
-                list_movies
+                puts "----------------------------------------------------"                
+                list_movies(UpcomingMovies::Movie.all)
             when "b"
                 puts "All actors with upcoming movies"
+                puts "----------------------------------------------------"                
                 list_actors
             when "d"
                 puts "All actors with upcoming movie releases this month"
+                puts "----------------------------------------------------"                
                 list_actors_month
             when "e"
                 puts "All actors with upcoming movie releases this week"
+                puts "----------------------------------------------------"                
                 list_actors_week
             when "o"
                 puts menu
             when "q"
                 puts "Exiting this menu"
             else
-                puts "Unrecognizable Command"
+                puts "Don't recognize that command. Try again."
             end
         end
     end
