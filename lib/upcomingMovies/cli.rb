@@ -96,7 +96,7 @@ class UpcomingMovies::CLI
             when "a"
                 puts "All upcoming movies"
                 puts "----------------------------------------------------"                
-                list_movies(UpcomingMovies::Movie.all)
+                list_movies(UpcomingMovies::Movie.all_in_future)
             when "b"
                 puts "All actors with upcoming movies"
                 puts "----------------------------------------------------"                

@@ -37,8 +37,12 @@ class UpcomingMovies::Movie
         movie_attributes.each {|key, value| self.send(("#{key}="), value)}
     end
 
-    #class method returns all upcoming movies if movie is in the future
     def self.all
+        @@all
+    end
+
+    #class method returns all upcoming movies if movie is in the future
+    def self.all_in_future
         @@all.select {|movie| movie if movie.futureMovie?}
     end
 
