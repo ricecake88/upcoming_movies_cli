@@ -5,15 +5,13 @@ require 'open-uri'
 class UpcomingMovies::Scraper
 
     BASE_PATH = "https://imdb.com/"
-    @@actors = ["Tom Hanks", "Tom Cruise", "Nicole Kidman", "Rachel McAdams", "Tom Hanks"]
-    # first version is to scrape coming soon information
-    # second version is to take information from coming soon and
-    # get info from movie profile page
+
     def scrape_upcoming(url)
         puts "Please wait a few minutes, retrieving data..."
         imdb_url = open(url)
         imdbDoc = Nokogiri::HTML(imdb_url)
         titles = imdbDoc.css("div.list.detail h4")
+        descriptions = imdbDoc.css("tr div.outline")
 
         movie = nil
         titles.each do |node|
@@ -31,6 +29,10 @@ class UpcomingMovies::Scraper
                 puts "...Scraped #{m.name}"
             end
         end
+
+        descriptions.each_with_index do |description, index|
+            UpcomingMovies::Movie.all[index].add_attributes({:description=>description.text.strip})
+        end
     end
 
     def scrape_movie_profile(url)
@@ -47,7 +49,7 @@ class UpcomingMovies::Scraper
             genreInfo = imdbDoc.css("div.title_wrapper div.subtext a span")
             genreInfo.each {|genre| genres << genre.text }
             rating = imdbDoc.css("div.subtext meta").attribute("content").value
-            description = imdbDoc.css("div.summary_text").text.strip
+            #description = imdbDoc.css("div.summary_text").text.strip
             release_date = imdbDoc.xpath("//div[contains(@class, title.wrapper)]/a[contains(@title, 'See more release dates')]").text
             dateInfo = release_date.split(" ")
             month = dateInfo[1]
@@ -60,7 +62,7 @@ class UpcomingMovies::Scraper
             puts "Could not open URL #{BASE_PATH + url}"
         end
         {:actors => actors, :month => month, :date=> date, :year=> year, :url=> url, 
-            :runtime=> runtime, :genre=>genres, :rating=>rating, :description=>description}
+            :runtime=> runtime, :genre=>genres, :rating=>rating}
     end
 
     def scrape_distributors(url)
