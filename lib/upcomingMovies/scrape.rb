@@ -31,9 +31,9 @@ class UpcomingMovies::Scraper
             end
         end
         
-        UpcomingMovies::Movie.all.each do |movie|
-          puts "#{movie.name} #{movie.month} #{movie.date}"
-        end        
+      #  UpcomingMovies::Movie.all.each do |movie|
+      #    puts "#{movie.name} #{movie.month} #{movie.date}"
+      #  end
     end
 
     def scrape_movie_profile(url)
@@ -50,6 +50,8 @@ class UpcomingMovies::Scraper
             runtime = imdbDoc.css("div.txt-block time").text
             genreInfo = imdbDoc.css("div.title_wrapper div.subtext a span")
             genreInfo.each {|genre| genres << genre.text }
+            rating = imdbDoc.css("div.subtext meta").attribute("content").value
+            description = imdbDoc.css("div.summary_text").text.strip
             release_date = imdbDoc.xpath("//div[contains(@class, title.wrapper)]/a[contains(@title, 'See more release dates')]").text
             dateInfo = release_date.split(" ")
             month = dateInfo[1]
@@ -61,7 +63,8 @@ class UpcomingMovies::Scraper
         rescue 
             puts "Could not open URL #{BASE_PATH + url}"
         end
-        {:actors => actors, :month => month, :date=> date, :year=> year, :url=> url, :runtime=> runtime, :genre=>genres}
+        {:actors => actors, :month => month, :date=> date, :year=> year, :url=> url, 
+            :runtime=> runtime, :genre=>genres, :rating=>rating, :description=>description}
     end
 
     def scrape_distributors(url)
