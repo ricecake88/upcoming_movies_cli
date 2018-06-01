@@ -1,9 +1,9 @@
 module Persons
     class UpcomingMovies::Actor < UpcomingMovies::Person
+        extend ::Helper
 
         @@all = []
 
-        #returns Actors only
         def self.all
             @@all
         end
@@ -20,6 +20,35 @@ module Persons
 
         def self.find_or_create_by_name(name)
             find_by_name(name) || create_by_name(name)
+        end
+
+        def self.actorsThisWeek
+            date = date_of_next_or_this_friday
+            actors = []
+            @@all.each do |actor|
+                actor.movies.each do |movie|
+                    day = sprintf("%02i", movie.date)
+                     if Helper.months[movie.month] == date[0] && day == date[1] && movie.year == date[2]
+                        actors << actor
+                        break
+                    end
+                end
+            end
+            actors
+        end
+
+        def self.actorsThisMonth
+            currentInfo = currentMonthYear
+            actors = []
+            @@all.each do |actor|
+                actor.movies.each do |movie|
+                    if movie.month == currentInfo[0] && movie.year == currentInfo[1] && movie.futureMovie?
+                        actors << actor
+                        break
+                    end
+                end
+            end
+            actors
         end
     end
 end

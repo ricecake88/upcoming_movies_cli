@@ -2,7 +2,8 @@ require 'date'
 require 'time'
 
 class UpcomingMovies::CLI
-    include ::Helper
+    extend ::Helper
+    extend ::Persons
 
     def call
         root_imdb = "https://www.imdb.com/movies-coming-soon/"
@@ -34,7 +35,7 @@ class UpcomingMovies::CLI
     def list_movies(movieArray)
         if movieArray.length != 0
             movieArray.each_with_index do |movie, index|
-                puts "#{index+1} #{movie.month} #{movie.date} #{movie.name}"
+                puts "#{index+1}. #{movie.month} #{movie.date} #{movie.name}"
             end
             sub_movie_menu(movieArray)
         else
@@ -42,29 +43,28 @@ class UpcomingMovies::CLI
         end
     end
 
-    def list_actors
-        UpcomingMovies::Actor.all.sort! do |x,y|
-            x.name <=> y.name
-        end
-        UpcomingMovies::Actor.all.each {|actor| puts actor.name}
-    end
-
-    def list_actors_month
-        currentInfo = currentMonthYear
-        UpcomingMovies::Movie.all.each do |movie|
-            if movie.month == currentInfo[0] && movie.year == currentInfo[1]
-                movie.actors.each {|actor| puts actor.name}
-            end
+    def sub_actor_menu(actorArray)
+        puts "Select an actor to see which upcoming movies the actor has by entering a number:"
+        input = gets.strip.to_i-1
+        #todo - change to raise exception
+        if !(input > actorArray.length-1 || input < 0)
+           actorArray[input].movies.each {|movie| puts "#{movie.month} #{movie.date} #{movie.name}"}
+        else
+            puts "Error, no actor associated with specified number."
         end
     end
 
-    def list_actors_week
-        date = date_of_next_friday
-        UpcomingMovies::Movie.all.each_with_index do |movie,index|
-            day = sprintf("%02i", movie.date) 
-            if @@months[movie.month] == date[0] && day == date[1] && movie.year == date[2]
-                movie.actors.each {|actor| puts actor.name}
+    def list_actors(actorArray)
+        if actorArray.length != 0
+            actorArray.sort! do |x,y|
+                x.name <=> y.name
             end
+            actorArray.uniq.each_with_index do |actor, index|
+                puts "#{index+1}. #{actor.name}"
+            end
+            sub_actor_menu(actorArray)
+        else
+            puts "There are no actors with upcoming movie releases in this time frame."
         end
     end
 
@@ -100,15 +100,15 @@ class UpcomingMovies::CLI
             when "b"
                 puts "All actors with upcoming movies"
                 puts "----------------------------------------------------"                
-                list_actors
+                list_actors(UpcomingMovies::Actor.all.uniq)
             when "d"
                 puts "All actors with upcoming movie releases this month"
                 puts "----------------------------------------------------"                
-                list_actors_month
+                list_actors(UpcomingMovies::Actor.actorsThisMonth)
             when "e"
                 puts "All actors with upcoming movie releases this week"
                 puts "----------------------------------------------------"                
-                list_actors_week
+                list_actors(UpcomingMovies::Actor.actorsThisWeek)
             when "o"
                 puts menu
             when "q"

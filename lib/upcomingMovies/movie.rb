@@ -5,18 +5,6 @@ class UpcomingMovies::Movie
     extend ::Helper
     attr_accessor :name, :description, :month, :date, :year, :actors, :url, :runtime, :genre,
         :rating
-    @@months = {'January'=>'01', 
-        'February'=>'02', 
-        'March'=>'03', 
-        'April'=>'04', 
-        'May'=>'05', 
-        'June'=>'06', 
-        'July'=>'07', 
-        'August'=>'08', 
-        'September'=>'09', 
-        'October'=>'10', 
-        'November'=>'11', 
-        'December'=>'12'}
 
     @@all = []
     def initialize(movieAttributes)
@@ -55,10 +43,10 @@ class UpcomingMovies::Movie
     end
 
     def self.moviesThisWeek
-        date = date_of_next_friday
+        date = date_of_next_or_this_friday
         moviesInWeek = @@all.select do |movie|
             day = sprintf("%02i", movie.date)
-            if @@months[movie.month] == date[0] && day == date[1] && movie.year == date[2]
+            if Helper.months[movie.month] == date[0] && day == date[1] && movie.year == date[2]
                 movie
             end
         end
@@ -74,7 +62,7 @@ class UpcomingMovies::Movie
 
     #class method that checks whether or not the movie release date is in the future
     def futureMovie?
-        strDate = @year + "-" + @@months[@month] + "-" + sprintf("%02i", @date)
+        strDate = @year + "-" + Helper.months[@month] + "-" + sprintf("%02i", @date)
         newDate = Date.parse(strDate)
         today = Date.today
         result = newDate >= today ? true : false
