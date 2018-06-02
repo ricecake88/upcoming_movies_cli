@@ -13,20 +13,31 @@ class UpcomingMovies::CLI
     end
 
     def sub_movie_menu(movie_array)
-        puts "Select a movie by choosing a number associated with the movie listed."
-        input = gets.strip.to_i-1
-        #todo - change to raise exception
-        if !(input > movie_array.length-1 || input < 0)
-           puts "Movie: #{movie_array[input].name}"
-           puts "Runtime: #{movie_array[input].runtime}"
-           print "Genre: "
-           movie_array[input].genre.each {|g| print g + " "}
-           print("\n")
-           puts "Description: #{movie_array[input].description}"
-           puts "Cast:"
-           movie_array[input].actors.each {|actor| puts actor.name}
-        else
-            puts "Error, no movie associated with specified number."
+        input = nil
+        while input != 'q'
+            puts "* Select a movie from the above list by entering the number associated with the movie."
+            puts "* Enter 'v' to view list of movies again."
+            puts "* Enter 'q' to quit:"
+            input = gets.strip
+            if Helper.integer?(input)
+                input = input.to_i-1
+                if !(input > movie_array.length-1 || input < 0)
+                    puts "Movie: #{movie_array[input].name}"
+                    puts "Runtime: #{movie_array[input].runtime}"
+                    print "Genre: "
+                    movie_array[input].genre.each {|g| print g + " "}
+                    print("\n")
+                    puts "Description: #{movie_array[input].description}"
+                    puts "Cast:"
+                    movie_array[input].actors.each {|actor| puts actor.name}
+                else
+                    puts "Error, no movie associated with specified number."
+                end
+            elsif input == "v"
+                list_movies(movie_array)
+            elsif input == "q"
+                break
+            end
         end
     end
  
@@ -46,7 +57,7 @@ class UpcomingMovies::CLI
         input = gets.strip.to_i-1
         #todo - change to raise exception
         if !(input > actor_array.length-1 || input < 0)
-           actor_array[input].movies.each {|movie| puts "#{movie.month} #{movie.date} #{movie.name}"}
+           actor_array[input].movies.each {|movie| puts "#{actor_array[input].name}:\n #{movie.month} #{movie.date} #{movie.name}"}
         else
             puts "Error, no actor associated with specified number."
         end
@@ -55,7 +66,7 @@ class UpcomingMovies::CLI
     def list_actors(actor_array)
         if actor_array.length != 0
             actor_array.sort! do |x,y|
-                x.name <=> y.name
+                x.movies.length <=> y.movies.length
             end
             actor_array.uniq.each_with_index do |actor, index|
                 puts "#{index+1}. #{actor.name}"
