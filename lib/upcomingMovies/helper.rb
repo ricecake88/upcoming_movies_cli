@@ -31,4 +31,8 @@ module Helper
     def self.months
         @@months
     end
+
+    def self.integer?(input)
+        !!(input =~ /^[-+]?[0-9]+$/)
+    end
 end
