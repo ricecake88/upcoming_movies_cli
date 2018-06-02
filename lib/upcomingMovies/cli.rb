@@ -132,7 +132,7 @@ class UpcomingMovies::CLI
             when "o"
                 puts menu
             when "q"
-                puts "Exiting this menu"
+                puts "Exiting the Program. Thanks, and have a nice day!"
             else
                 puts "Don't recognize that command. Try again."
             end
