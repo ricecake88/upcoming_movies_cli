@@ -5,13 +5,21 @@ require 'open-uri'
 class UpcomingMovies::Scraper
 
     BASE_PATH = "https://imdb.com/"
-
-    def scrape_upcoming(url)
+    def scrape_base(url)
         puts "Please wait a few minutes, retrieving data..."
-        imdb_url = open(url)
-        imdbDoc = Nokogiri::HTML(imdb_url)
-        titles = imdbDoc.css("div.list.detail h4")
-        descriptions = imdbDoc.css("tr div.outline")
+        main_url = open(url)
+        imdbDoc = Nokogiri::HTML(main_url)
+        all_pages = imdbDoc.css("div.header div div.sort option")
+        all_pages.each do |page_url|
+            new_url = open(BASE_PATH + page_url.attribute("value").value)
+            puts "Getting Page..."
+            scrape_upcoming(Nokogiri::HTML(new_url))
+        end
+    end
+
+    def scrape_upcoming(document)
+        titles = document.css("div.list.detail h4")
+        descriptions = document.css("tr div.outline")
 
         movie = nil
         titles.each do |node|
@@ -33,6 +41,7 @@ class UpcomingMovies::Scraper
         descriptions.each_with_index do |description, index|
             UpcomingMovies::Movie.all[index].add_attributes({:description=>description.text.strip})
         end
+
     end
 
     def scrape_movie_profile(url)

@@ -6,11 +6,9 @@ class UpcomingMovies::CLI
     extend ::Persons
 
     def call
-        root_imdb = "https://www.imdb.com/movies-coming-soon/"
-        imdb_url = root_imdb + "2018-06/?ref_=cs_dt_pv"
-        s= UpcomingMovies::Scraper.new
-        s.scrape_upcoming(imdb_url)
-        #prints out menu    
+        root_imdb = "https://www.imdb.com/movies-coming-soon/?ref_=inth_cs"
+        s = UpcomingMovies::Scraper.new
+        s.scrape_base(root_imdb)  
         menu
     end
 
