@@ -53,13 +53,24 @@ class UpcomingMovies::CLI
     end
 
     def sub_actor_menu(actor_array)
-        puts "Select an actor to see which upcoming movies the actor has by entering a number:"
-        input = gets.strip.to_i-1
-        #todo - change to raise exception
-        if !(input > actor_array.length-1 || input < 0)
-           actor_array[input].movies.each {|movie| puts "#{actor_array[input].name}:\n #{movie.month} #{movie.date} #{movie.name}"}
-        else
-            puts "Error, no actor associated with specified number."
+        input = nil
+        while input != 'q'
+            puts "Select an actor from the above list by entering the number associated with the actor."
+            puts "* Enter 'v' to view list of actors again."
+            puts "* Enter 'q' to quit:"
+            input = gets.strip
+            if Helper.integer?(input)
+                input = input.to_i-1
+                if !(input > actor_array.length-1 || input < 0)
+                    actor_array[input].movies.each {|movie| puts "#{actor_array[input].name}:\n #{movie.month} #{movie.date} #{movie.name}"}
+                else
+                    puts "Error, no actor associated with specified number."
+                end
+            elsif input == "v"
+                list_actors(actor_array)
+            elsif input == "q"
+                break
+            end
         end
     end
 
