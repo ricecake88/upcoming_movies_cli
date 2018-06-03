@@ -4,9 +4,16 @@ Version 0.1.0
 
 This program displays the information scraped from "IMDB's Coming Soon" pages, and displays and gathers upcoming movie information. The movie information can then be outputted by movies coming out this Friday, this month or output a list of all movies. In addition, it can display all the actors that have upcoming movies, or by this Friday or by this current month. It can also output movies by an actor via user input.
 
+# Installation
+
+1. Clone or download the zip from github of the repository (https://github.com/ricecake88/upcoming_movies_cli) to a local folder of your choice.
+2. Unzip the repository if you have downloaded the zip via HTTP. You can skip this step if you have cloned the repository.
+3. Run the program by typing $ruby ./bin/upcomingMovies
+
+
 ## Usage
 
-1. Run 'bin/upcomingMovies'
+1. Run $ruby ./bin/upcomingMovies
 2. This will bring up the program and the menu
 ```
 --------------------------------------
