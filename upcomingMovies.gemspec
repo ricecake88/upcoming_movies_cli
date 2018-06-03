@@ -4,14 +4,14 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "upcomingMovies/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "upcoming_movies_cli"
+  spec.name          = "upcomingMovies"
   spec.version       = UpcomingMovies::VERSION
   spec.authors       = ["Grace S"]
   spec.email         = ["vocalise@gmail.com"]
 
   spec.summary       = %q{Lists Upcoming Movies.}
   #spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "https://github.com/ricecake88/"
+  spec.homepage      = "https://github.com/ricecake88/upcoming_movies_cli"
   spec.license       = "MIT"
 
   # Specify which files should be added to the gem when it is released.
